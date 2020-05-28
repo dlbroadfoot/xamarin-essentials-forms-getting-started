@@ -17,6 +17,9 @@
 
     <Grid>
         <StackLayout Orientation="Vertical">
+            <Label Text="{Binding CurrentMagneticFieldStrength, StringFormat='Magnetic Field Magnitude: {0:N2} μT'}" HorizontalOptions="Center" BackgroundColor="White" LineBreakMode="WordWrap" FontSize="Small" />
+            <Label Text="{Binding CurrentAcceleration, StringFormat='Acceleration: {0} G',Converter={converters:VectorConverter}}" HorizontalOptions="Center" BackgroundColor="White" LineBreakMode="WordWrap" FontSize="Small"  />
+            <Label Text="{Binding CurrentAngularVelocity, StringFormat='Angular Velocity: {0} rad/s',Converter={converters:VectorConverter}}" HorizontalOptions="Center" BackgroundColor="White" LineBreakMode="WordWrap" FontSize="Small"  />
         </StackLayout>
         
         <cards:CarouselView ItemsSource="{Binding ImageUrls}" SelectedIndex="{Binding SelectedImageIndex}">

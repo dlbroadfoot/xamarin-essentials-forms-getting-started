@@ -52,6 +52,15 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <Picker Title="Calibrate Sea Level Pressure" ItemsSource="{Binding CalibrationPressures}" SelectedItem="{Binding CalibrationPressure}" FontSize="Small" HorizontalOptions="Center"  Grid.Row="3"  >
+            <Picker.Behaviors>
+                <local:EventToCommandBehavior EventName="Focused" Command="{Binding LoadCalibrationCommand}" />
+            </Picker.Behaviors>
+        </Picker>
+
+        <Label Text="{Binding GPSAltitude, StringFormat='GPS Altitude {0:N2}'}" 
+               Margin="0,20" Grid.Row="4" HorizontalOptions="Center" />
+
         <Label Text="{Binding CurrentPressure, StringFormat='Current Pressure {0:N2} hPa'}" 
                Margin="0,20" Grid.Row="5" HorizontalOptions="Center" />
         

@@ -20,6 +20,9 @@ namespace RealEstateApp.ViewModels
 
             if (!Barometer.IsMonitoring)
                 Barometer.Start(SensorSpeed.UI);
+
+            var location = await Geolocation.GetLocationAsync();
+            GPSAltitude = location.Altitude.GetValueOrDefault();
         }
 
         public override void OnDisappearing()
@@ -32,17 +35,48 @@ namespace RealEstateApp.ViewModels
 
         private void OnReadingChanged(object sender, BarometerChangedEventArgs e)
         {
+            CurrentPressure = e.Reading.PressureInHectopascals;
+            CurrentAltitude = GetAltitudeInMetres(CurrentPressure, SeaLevelPressure);
+        }
 
+        public double GetAltitudeInMetres(double currentPressure, double seaLevelPressure)
+        {
+            return 44307.694 * (1 - Math.Pow(currentPressure / seaLevelPressure, 0.190284));
         }
 
         private void SaveMeasurement()
         {
-           
+            var newMeasurement = new MeasurementViewModel
+            {
+                Pressure = CurrentPressure,
+                Altitude = CurrentAltitude,
+                Label = MeasurementLabel
+            };
+
+            var previousMeasurement = Measurements.LastOrDefault();
+
+            if (previousMeasurement != null)
+            {
+                newMeasurement.HeightChange = newMeasurement.Altitude - previousMeasurement.Altitude;
+            }
+
+            Measurements.Add(newMeasurement);
+            MeasurementLabel = null;
         }
 
         private void LoadCalibration()
         {
+            CalibrationPressures.Clear();
+            foreach (var referencePressure in Enumerable.Range(1000, 30))
+            {
+                var item = new CalibrationItemViewModel
+                {
+                    Pressure = referencePressure,
+                    Altitude = GetAltitudeInMetres(CurrentPressure, referencePressure)
+                };
 
+                CalibrationPressures.Add(item);
+            }
         }
 
         private CalibrationItemViewModel _calibrationPressure;
