@@ -106,12 +106,42 @@
                 Grid.Row="4"
                 FontSize="14"
                 Text="{Binding Property.LandSize, StringFormat='Land size: {0} &#x33a1;'}" />
-            <Label Grid.Row="5"
-                Margin="0,20,0,0"
-                FontAttributes="Bold"
-                FontSize="14"
-                VerticalOptions="Start"
-                Text="Description:" />
+            <StackLayout Grid.Row="5" Orientation="Horizontal">
+                <Label
+                    Margin="0,20,0,0"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    VerticalOptions="Start"
+                    Text="Description:" />
+                <Button Text="&#xf04b;" Style="{StaticResource IconFont}"
+                        Command="{Binding SpeakDescriptionCommand}"
+                        IsVisible="{Binding IsSpeaking, Converter={converters:InverseBoolConverter}}">
+                    <Button.Behaviors>
+                        <behaviors:LongPressBehavior Command="{Binding ToggleAdvancedSpeechCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Text="&#xf04d;" Style="{StaticResource IconFont}"
+                        Command="{Binding CancelSpeechCommand}"
+                        IsVisible="{Binding IsSpeaking}"/>
+            </StackLayout>
+            <Grid Grid.Row="6" IsVisible="{Binding ShowAdvancedSpeechControls}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Text="Pitch" />
+                <Label Grid.Row="1" Grid.Column="0" Text="Volume"  />
+                <Label Grid.Row="2" Grid.Column="0" Text="Locale" VerticalOptions="Center" />
+                <Slider Grid.Row="0" Grid.Column="1" Value="{Binding SelectedPitch}" Maximum="2" />
+                <Slider Grid.Row="1" Grid.Column="1" Value="{Binding SelectedVolume}" Maximum="1" />
+                <Picker Grid.Row="2" Grid.Column="1" FontSize="Small" 
+                        ItemsSource="{Binding LocalesCollection}" SelectedItem="{Binding SelectedLocale}" ItemDisplayBinding="{Binding Name}" />
+            </Grid>
             <StackLayout Grid.Row="7" Orientation="Horizontal" IsVisible="False">              
             </StackLayout>            
             <Label

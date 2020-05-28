@@ -24,6 +24,31 @@ namespace RealEstateApp.ViewModels
         }
 
         public ICommand ItemSelectedCommand => new Command<MenuItem>(SelectMenuItemAsync);
+        public ICommand TurnFlashlightOnCommand => new Command(() => ToggleFlashlight(true));
+        public ICommand TurnFlashlightOffCommand => new Command(() => ToggleFlashlight(false));
+
+        private async void ToggleFlashlight(bool on)
+        {
+            try
+            {
+                if (on)
+                    await Flashlight.TurnOnAsync();
+                else
+                    await Flashlight.TurnOffAsync();
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                await DialogService.ShowAlertAsync("Flashlight not supported on this device", "Not supported");
+            }
+            catch (PermissionException pEx)
+            {
+                await DialogService.ShowAlertAsync("Please allow access to the camera to use the flashlght", "Permission Denied");
+            }
+            catch (Exception ex)
+            {
+                await DialogService.ShowAlertAsync("Unable to toggle flashlight", "Error");
+            }
+        }
 
         private static ObservableCollection<MenuItem> _menuItems = new ObservableCollection<MenuItem>();
 

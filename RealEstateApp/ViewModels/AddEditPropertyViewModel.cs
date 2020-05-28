@@ -19,11 +19,32 @@ namespace RealEstateApp.ViewModels
             Agents = new ObservableCollection<Agent>(Repository.GetAgents());
         }
 
+        public async Task GetLocationAsync()
+        {
+            var request = new GeolocationRequest(GeolocationAccuracy.Best);
+            var location = await Geolocation.GetLocationAsync(request);
+
+            Property.Latitude = location.Latitude;
+            Property.Longitude = location.Longitude;
+
+            var addresses = await Geocoding.GetPlacemarksAsync(location);
+            var address = addresses.FirstOrDefault();
+            if (address != null)
+            {
+                Property.Address = $"{address.SubThoroughfare} {address.Thoroughfare}, {address.Locality} {address.AdminArea} {address.PostalCode} {address.CountryName}";
+            }
+
+            OnPropertyChanged(nameof(Property));
+        }
+
 
         public ObservableCollection<Agent> Agents { get; }
 
         public ICommand SaveCommand => new Command(SaveAsync);
         public ICommand CancelCommand => new Command(CancelAsync);
+        public ICommand GetLocationCommand => new Command(async () => await GetLocationAsync());
+        public ICommand GeocodeCommand => new Command(GeocodeAsync);
+        public bool IsOnline => Xamarin.Essentials.Connectivity.NetworkAccess == NetworkAccess.Internet;
         public ICommand GetCurrentAspectCommand => new Command(GetCurrentAspectAsync);
 
         private async void GetCurrentAspectAsync()
@@ -36,13 +57,79 @@ namespace RealEstateApp.ViewModels
                 OnPropertyChanged(nameof(Property));
             }
         }
+
+        private void CheckBatteryStatus()
+        {
+            if (Battery.ChargeLevel < 0.2)
+            {
+                StatusMessage = "Low battery. Please save changes asap";
+                if (Battery.State != BatteryState.Charging)
+                    StatusColor = System.Drawing.Color.Red;
+                else
+                    StatusColor = System.Drawing.Color.Yellow;
+
+                if (Battery.EnergySaverStatus == EnergySaverStatus.On)
+                    StatusColor = System.Drawing.Color.Green;
+            }
+            else
+            {
+                StatusMessage = null;
+            }
+        }
         
         public override void OnAppearing()
         {
+            Connectivity.ConnectivityChanged += OnConnectivityChanged;
+            CheckBatteryStatus();
+            Battery.BatteryInfoChanged += OnBatteryInfoChanged;
+            Battery.EnergySaverStatusChanged += OnEnergySaverStatusChanged;
+        }
+
+        private void OnEnergySaverStatusChanged(object sender, EnergySaverStatusChangedEventArgs e)
+        {
+            CheckBatteryStatus();
+        }
+
+        private void OnBatteryInfoChanged(object sender, BatteryInfoChangedEventArgs e)
+        {
+            CheckBatteryStatus();
         }
 
         public override void OnDisappearing()
         {
+            Connectivity.ConnectivityChanged -= OnConnectivityChanged;
+            Battery.BatteryInfoChanged -= OnBatteryInfoChanged;
+            Battery.EnergySaverStatusChanged -= OnEnergySaverStatusChanged;
+        }
+
+        private void OnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+        {
+            Logger.Debug(e.NetworkAccess);
+            Logger.Debug(e.ConnectionProfiles);
+            OnPropertyChanged(nameof(IsOnline));
+        }
+
+        private async void GeocodeAsync()
+        {
+            if (string.IsNullOrWhiteSpace(Property.Address))
+            {
+                await DialogService.ShowAlertAsync("Please enter an address", "No Address");
+                return;
+            }
+            if (IsOnline == false)
+            {
+                await DialogService.ShowAlertAsync("You must be online to use geocoding", "Offline");
+                return;
+            }
+
+            var locations = await Geocoding.GetLocationsAsync(Property.Address);
+            var location = locations.FirstOrDefault();
+            if (location != null)
+            {
+                Property.Latitude = location.Latitude;
+                Property.Longitude = location.Longitude;
+                OnPropertyChanged(nameof(Property));
+            }
         }
 
         private Property _property;
@@ -108,6 +195,7 @@ namespace RealEstateApp.ViewModels
 
         private void CancelAsync()
         {
+            Vibration.Cancel();
             NavigationService.PopModalAsync();
         }
 
@@ -117,6 +205,8 @@ namespace RealEstateApp.ViewModels
             {
                 StatusMessage = "Please fill in all required fields";
                 StatusColor = Color.Red;
+                Xamarin.Essentials.Vibration.Cancel();
+                Vibration.Vibrate(5000);
                 return false;
             }
 

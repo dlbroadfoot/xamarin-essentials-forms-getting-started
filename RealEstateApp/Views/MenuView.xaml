@@ -58,6 +58,17 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <StackLayout Grid.Row="2" Orientation="Horizontal" HorizontalOptions="FillAndExpand"  Padding="10">
+            <Label FontSize="20" Text="Flashlight" VerticalOptions="Center" />
+            <Button
+                    Style="{StaticResource IconFont}"
+                    Text="&#xf0eb;" TextColor="Black"
+                    Command="{Binding TurnFlashlightOffCommand}"/>
+            <Button
+                    Style="{StaticResource IconFont}"
+                    Text="&#xf0eb;" TextColor="Yellow"
+                    Command="{Binding TurnFlashlightOnCommand}"/>
+        </StackLayout>
         
         
         

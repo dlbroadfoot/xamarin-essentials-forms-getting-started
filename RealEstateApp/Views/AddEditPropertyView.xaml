@@ -32,6 +32,25 @@
                     <Label
                         FontSize="Medium"
                         Style="{StaticResource IconFont}"
+                        Text="&#xf124; Location" />
+                    <Grid HorizontalOptions="FillAndExpand">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Text="{Binding Property.Latitude}" HorizontalOptions="Center" VerticalOptions="Center"  />
+                        <Label Grid.Column="1" Text="{Binding Property.Longitude}" HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Button Grid.Column="2" Text="&#xf08d;" Style="{StaticResource IconFont}"
+                                Command="{Binding GetLocationCommand}" />
+                        <Button Grid.Column="3" Text="&#xf015;" Style="{StaticResource IconFont}"
+                                Command="{Binding GeocodeCommand}"
+                                IsVisible="{Binding IsOnline}"/>
+                    </Grid>
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
                         Text="&#xf14e; Aspect" />
                     <Grid HorizontalOptions="FillAndExpand">
                         <Grid.ColumnDefinitions>

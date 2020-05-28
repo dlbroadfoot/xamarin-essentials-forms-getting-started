@@ -19,6 +19,8 @@ namespace RealEstateApp.ViewModels
     public class PropertyDetailViewModel : ViewModelBase
     {
         public ICommand EditPropertyCommand => new Command(EditPropertyAsync);
+        public ICommand SpeakDescriptionCommand => new Command(SpeakDescriptionAsync);
+        public ICommand CancelSpeechCommand => new Command(CancelSpeechAsync);
         public ICommand ViewPhotosCommand => 
             new Command(async () => await NavigationService.NavigateToModalAsync<ImageListViewModel>(Property));
         public ICommand ViewPanoramaCommand => 
@@ -41,6 +43,69 @@ namespace RealEstateApp.ViewModels
             Repository.ObservePropertySaved()
                 .Where(x => x.Id == Property.Id)
                 .Subscribe(x => Property = x);
+
+            var locales = await TextToSpeech.GetLocalesAsync();
+            LocalesCollection = new ObservableCollection<Locale>(locales);
+            OnPropertyChanged(nameof(LocalesCollection));
+            OnPropertyChanged(nameof(SelectedLocale));
+        }
+
+        private CancellationTokenSource _speechCancellation;
+
+        private async void CancelSpeechAsync()
+        {
+            if (_speechCancellation?.IsCancellationRequested ?? true)
+                return;
+            _speechCancellation.Cancel();
+        }
+
+        private async void SpeakDescriptionAsync()
+        {
+            _speechCancellation = new CancellationTokenSource();
+            IsSpeaking = true;
+            var options = new SpeechOptions
+            {
+                Locale = this.SelectedLocale,
+                Volume = this.SelectedVolume,
+                Pitch = this.SelectedPitch
+            };
+            await TextToSpeech.SpeakAsync(Property.Description, options, _speechCancellation.Token);
+            IsSpeaking = false;
+        }
+
+        public ObservableCollection<Locale> LocalesCollection { get; set; } =
+            new ObservableCollection<Locale>();
+        
+        private float _selectedVolume = 1;
+
+        public float SelectedVolume
+        {
+            get => _selectedVolume;
+            set => SetProperty(ref _selectedVolume, value);
+        }
+
+        private float _selectedPitch = 1;
+
+        public float SelectedPitch
+        {
+            get => _selectedPitch;
+            set => SetProperty(ref _selectedPitch, value);
+        }
+
+        private Locale _selectedLocale;
+
+        public Locale SelectedLocale
+        {
+            get => _selectedLocale;
+            set => SetProperty(ref _selectedLocale, value);
+        }
+
+        private bool _isSpeaking;
+
+        public bool IsSpeaking
+        {
+            get => _isSpeaking;
+            set => SetProperty(ref _isSpeaking, value);
         }
 
         private Agent _agent;

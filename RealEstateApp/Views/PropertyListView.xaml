@@ -12,6 +12,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddPropertyCommand}" Text="Add" />
+        <ToolbarItem Icon="fa_sort_amount_asc.png" Command="{Binding SortCommand}"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout>
@@ -107,6 +108,16 @@
                                     Grid.Row="3"
                                     FontSize="13"
                                     Text="{Binding Property.LandSize, StringFormat='Land Size: {0} &#x33a1;'}" />
+                                <Label
+                                    Grid.Row="4"
+                                    FontSize="13"
+                                    Text="{Binding DistanceInKilometres, StringFormat='{0:N2} km away'}"
+                                    IsVisible="{Binding DistanceInKilometres, Converter={converters:InverseBoolConverter}}"/>
+                                <Label
+                                    Grid.Row="5"
+                                    FontSize="13"
+                                    Text="{Binding DistanceInMiles, StringFormat='{0:N2} miles away'}"
+                                    IsVisible="{Binding DistanceInMiles, Converter={converters:InverseBoolConverter}}"/>
                             </Grid>
                         </Grid>
                     </ViewCell>
