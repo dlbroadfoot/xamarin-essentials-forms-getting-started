@@ -181,6 +181,13 @@ namespace RealEstateApp.ViewModels
             {
                 Title = "Add Property";
                 Property = new Property();
+
+                var data = await Clipboard.GetTextAsync();
+
+                if (data?.Contains("\"Address\":") == true)
+                {
+                    Property = JsonConvert.DeserializeObject<Property>(data);
+                }
             }
             else
             {

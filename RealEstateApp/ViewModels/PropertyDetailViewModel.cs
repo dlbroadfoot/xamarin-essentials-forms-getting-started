@@ -26,12 +26,62 @@ namespace RealEstateApp.ViewModels
         public ICommand ViewPanoramaCommand => 
             new Command(async () => await NavigationService.NavigateToModalAsync<PanoramaViewModel>(Property));
 
+        public ICommand PhoneCommand => new Command<Vendor>(UsePhoneAsync);
+        public ICommand SendEmailCommand => new Command<Vendor>(SendEmailAsync);
+        public ICommand OpenMapsCommand => new Command<NavigationMode>(OpenMapsAsync);
+        public ICommand OpenBrowserCommand => new Command<BrowserLaunchMode>(OpenBrowserAsync);
+        public ICommand OpenUberCommand { get; set; }
+        public ICommand OpenFileCommand => new Command(OpenFileAsync);
+        public ICommand ShareTextCommand => new Command(ShareTextAsync);
+        public ICommand ShareFileCommand => new Command(ShareFileAsync);
+        public ICommand CopyToClipboardCommand => new Command(CopyToClipboardAsync);
+
         public override void OnAppearing()
         {
         }
 
         public override void OnDisappearing()
         {
+        }
+
+        private async void CopyToClipboardAsync()
+        {
+            var data = JsonConvert.SerializeObject(Property);
+
+            await Clipboard.SetTextAsync(data);
+        }
+
+        private async void ShareFileAsync()
+        {
+            ExperimentalFeatures.Enable(ExperimentalFeatures.ShareFileRequest, ExperimentalFeatures.OpenFileRequest);
+
+            await Share.RequestAsync(new ShareFileRequest
+            {
+                Title = "Share Property Contract",
+                File = new ShareFile(Property.ContractFilePath)
+            });
+        }
+
+        private async void ShareTextAsync()
+        {
+            await Share.RequestAsync(new ShareTextRequest
+            {
+                Uri = Property.NeighbourhoodUrl,
+                Subject = "A property you may be interested in",
+                Text = $"{Property.Address} - {Property.Price:C0} - {Property.Beds} beds",
+                Title = "Share Property"
+            });
+        }
+
+        private async void OpenFileAsync()
+        {
+            var filePath = Property.ContractFilePath;
+
+            ExperimentalFeatures.Enable(ExperimentalFeatures.OpenFileRequest, ExperimentalFeatures.ShareFileRequest);
+
+            await Launcher.OpenAsync(
+                new OpenFileRequest("Contract",
+                  new ReadOnlyFile(filePath)));
         }
 
         public override async Task InitializeAsync(object parameter)
@@ -48,6 +98,102 @@ namespace RealEstateApp.ViewModels
             LocalesCollection = new ObservableCollection<Locale>(locales);
             OnPropertyChanged(nameof(LocalesCollection));
             OnPropertyChanged(nameof(SelectedLocale));
+
+            if (await Launcher.CanOpenAsync("uber://"))
+            {
+                OpenUberCommand = new Command(OpenUberAsync);
+                OnPropertyChanged(nameof(OpenUberCommand));
+            }
+        }
+
+        private async void OpenUberAsync()
+        {
+            await Launcher.OpenAsync($"uber://?client_id=RealEstate&" +
+                $"action=setPickup&" +
+                $"dropoff[latitude]={Property.Latitude}&" +
+                $"dropoff[longitude]={Property.Longitude}&" +
+                $"dropoff[nickname]=Property&" +
+                $"dropoff[formatted_address]={WebUtility.UrlEncode(Property.Address)}");
+        }
+
+        private async void OpenBrowserAsync(BrowserLaunchMode mode)
+        {
+            await Browser.OpenAsync(Property.NeighbourhoodUrl, new BrowserLaunchOptions
+            {
+                LaunchMode = mode,
+                TitleMode = BrowserTitleMode.Default,
+                PreferredControlColor = Color.White,
+                PreferredToolbarColor = Color.FromHex("#2196F3")
+            });
+        }
+
+        private async void OpenMapsAsync(NavigationMode mode)
+        {
+            try
+            {
+                await Map.OpenAsync(Property.Latitude, Property.Longitude, new MapLaunchOptions
+                {
+                    Name = Property.Address,
+                    NavigationMode = mode
+                });
+            }
+            catch(FeatureNotSupportedException ex)
+            {
+                await DialogService.ShowAlertAsync("No map application installed", "Feature Not Supported");
+            }
+        }
+
+        private async void SendEmailAsync(Vendor vendor)
+        {
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var attachmentFilePath = Path.Combine(folder, "property.txt");
+            File.WriteAllText(attachmentFilePath, $"{Property.Address}");
+
+            ExperimentalFeatures.Enable(ExperimentalFeatures.EmailAttachments);
+
+            try
+            {
+                await Email.ComposeAsync(new EmailMessage
+                {
+                    To = new List<string> { vendor.Email },
+                    Subject = $"Re: {Property.Address}",
+                    BodyFormat = EmailBodyFormat.PlainText,
+                    Body = $"Hi {vendor.FirstName}, \n\n",
+                    Attachments = new List<EmailAttachment>
+                    {
+                        new EmailAttachment(attachmentFilePath)
+                    }
+                });
+            }
+            catch (FeatureNotSupportedException ex)
+            {
+                await DialogService.ShowAlertAsync("Your device does not support this feature", "Feature Not Supported");
+            }
+        }
+
+        private async void UsePhoneAsync(Vendor vendor)
+        {
+            try
+            {
+                var action = await DialogService.ShowActionSheetAsync(vendor.Phone, "Cancel", null, "Call", "SMS");
+
+                if (action == "Call")
+                {
+                    PhoneDialer.Open(vendor.Phone);
+                }
+                else if (action == "SMS")
+                {
+                    await Sms.ComposeAsync(new SmsMessage
+                    {
+                        Recipients = new List<string> { vendor.Phone },
+                        Body = $"Hi {vendor.FirstName}, regarding {Property.Address} "
+                    });
+                }
+            }
+            catch (FeatureNotSupportedException ex)
+            {
+                await DialogService.ShowAlertAsync("Your device does not support this feature", "Feature Not Supported");
+            }
         }
 
         private CancellationTokenSource _speechCancellation;
