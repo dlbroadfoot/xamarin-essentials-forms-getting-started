@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Class="RealEstateApp.Views.MenuView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:iOS="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    xmlns:behaviours="clr-namespace:RealEstateApp.Behaviours;assembly=RealEstateApp"
+    xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+    base:ViewModelLocator.AutoWireViewModel="true"
+    Title="Menu"
+    iOS:Page.UseSafeArea="true">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid
+            Grid.Row="0"
+            Padding="20"
+            ColumnSpacing="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Image
+                Grid.Row="0"
+                Grid.Column="0"
+                Source="{Binding LoggedInUser.ImageUrl}"
+                VerticalOptions="Start"
+                WidthRequest="100" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                FontSize="Large"
+                HorizontalTextAlignment="Start"
+                Text="{Binding LoggedInUser.Name}"
+                VerticalTextAlignment="Center" />
+
+        </Grid>
+
+        <ListView
+            x:Name="ListViewMenu"
+            Grid.Row="1"
+            HasUnevenRows="True"
+            ItemsSource="{Binding MenuItems}"
+            behaviours:ItemTappedCommandListView.ItemTappedCommand="{Binding ItemSelectedCommand}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+                            <Label FontSize="20" Text="{Binding Title}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        
+        
+    </Grid>
+</ContentPage>

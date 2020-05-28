@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ContentPage
+    x:Class="RealEstateApp.Views.AddEditPropertyView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:RealEstateApp.Converters;assembly=RealEstateApp"
+    xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+    base:ViewModelLocator.AutoWireViewModel="true"
+    Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding CancelCommand}" Text="Cancel" />
+        <ToolbarItem Command="{Binding SaveCommand}" Text="Save" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="#E8E8E8">
+            <Label
+                BackgroundColor="{Binding StatusColor}"
+                IsVisible="{Binding StatusMessage, Converter={converters:StringBoolConverter}}"
+                Text="{Binding StatusMessage}"
+               HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                TextColor="{Binding StatusColor, Converter={converters:ForegroundColorConverter}}" HeightRequest="40" />
+            <ScrollView VerticalOptions="FillAndExpand">
+                <StackLayout Padding="15" Spacing="20">
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf015; Address" />
+                    <Entry FontSize="Medium" Text="{Binding Property.Address}"/>
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf14e; Aspect" />
+                    <Grid HorizontalOptions="FillAndExpand">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Entry Text="{Binding Property.Aspect}" HorizontalOptions="FillAndExpand" Grid.Column="0" FontSize="Medium" VerticalOptions="Center"  />
+                        <Button Command="{Binding GetCurrentAspectCommand}" Grid.Column="1" Text="&#xf568;" Style="{StaticResource IconFont}" />
+                    </Grid>
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf02b; Price" />
+                    <Entry FontSize="Medium"
+                           Text="{Binding Property.Price, Converter={converters:NullableIntConverter}}" />
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf236; Bedrooms" />
+                    <Entry
+                        FontSize="Medium"
+                        Keyboard="Numeric"
+                        ReturnType="Next"
+                        Text="{Binding Property.Beds, Converter={converters:NullableIntConverter}}" />
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf2cd; Bathrooms" />
+                    <Entry
+                        FontSize="Medium"
+                        Keyboard="Numeric"
+                        ReturnType="Next"
+                        Text="{Binding Property.Baths, Converter={converters:NullableIntConverter}}" />
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf1b9; Parking" />
+                    <Entry
+                        FontSize="Medium"
+                        Keyboard="Numeric"
+                        ReturnType="Next"
+                        Text="{Binding Property.Parking, Converter={converters:NullableIntConverter}}" />
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf0c8; Land Size (&#x33a1;)" />
+                    <Entry
+                        FontSize="Medium"
+                        Keyboard="Numeric"
+                        ReturnType="Next"
+                        Text="{Binding Property.LandSize, Converter={converters:NullableIntConverter}}" />
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf15c; Description" />
+                    <Editor
+                        Margin="0"
+                        FontSize="Medium"
+                        HeightRequest="50"
+                        Text="{Binding Property.Description}" />
+                    <Label
+                        FontSize="Medium"
+                        Style="{StaticResource IconFont}"
+                        Text="&#xf508; Agent" />
+                    <Picker
+                        FontSize="Medium"
+                        ItemDisplayBinding="{Binding Name}"
+                        ItemsSource="{Binding Agents}"
+                        SelectedItem="{Binding SelectedAgent}" />
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Class="RealEstateApp.Views.LoginView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+    xmlns:converters="clr-namespace:RealEstateApp.Converters"
+    base:ViewModelLocator.AutoWireViewModel="true"
+    Title="Login">
+
+    <ScrollView>
+        <StackLayout Padding="10" VerticalOptions="StartAndExpand">
+            
+            <Image Source="logo.png" 
+                   Margin="20" 
+                   HeightRequest="150"/>
+
+            <Entry Text="{Binding Username}"
+                   Placeholder="Username" 
+                   HorizontalOptions="Center"
+                   WidthRequest="300"
+                   Keyboard="Email"/>
+
+            <Entry Text="{Binding Password}" 
+                   Placeholder="Password"
+                   IsPassword="True"
+                   HorizontalOptions="Center"
+                   WidthRequest="300"/>
+
+            <Label Text="{Binding StatusMessage}"
+                   TextColor="Red"
+                   FontSize="Medium"
+                    HorizontalOptions="Center"
+                   IsVisible="{Binding StatusMessage, Converter={converters:StringBoolConverter}}"/>
+
+            <Button
+                    Text="Log In"    
+                    HorizontalOptions="Center"
+                    WidthRequest="300"
+                    Command="{Binding LoginCommand}"
+                    IsVisible="{Binding IsBusy, Converter={converters:InverseBoolConverter}}"/>
+
+            <ActivityIndicator IsEnabled="True"
+                                IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"                              
+                               Color="Black"
+                               x:Name="LoginLoader" />
+
+
+        </StackLayout>
+    </ScrollView>
+
+</ContentPage>

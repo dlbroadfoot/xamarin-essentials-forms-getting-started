@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Name="ImageListViewPage"
+    x:Class="RealEstateApp.Views.ImageListView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+    xmlns:converters="clr-namespace:RealEstateApp.Converters"
+    xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
+    base:ViewModelLocator.AutoWireViewModel="true"
+    Title="Photos">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding CloseCommand}" Text="Close" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <StackLayout Orientation="Vertical">
+        </StackLayout>
+        
+        <cards:CarouselView ItemsSource="{Binding ImageUrls}" SelectedIndex="{Binding SelectedImageIndex}">
+            <cards:CarouselView.ItemTemplate>
+                <DataTemplate>
+                        <Image Source="{Binding Path=.}" Aspect="AspectFit" />
+                </DataTemplate>
+            </cards:CarouselView.ItemTemplate>
+        </cards:CarouselView>
+    </Grid>
+
+
+</ContentPage>

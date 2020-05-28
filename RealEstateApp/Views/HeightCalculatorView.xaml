@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Class="RealEstateApp.Views.HeightCalculatorView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+    xmlns:local="clr-namespace:RealEstateApp.Behaviours"
+    xmlns:converters="clr-namespace:RealEstateApp.Converters"
+    base:ViewModelLocator.AutoWireViewModel="true"
+    Title="Height Calculator">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label Text="{Binding CurrentAltitude, StringFormat='Current Altitude {0:N2} m'}" 
+               Margin="0,20" Grid.Row="0" HorizontalOptions="Center" FontSize="Large" />
+
+        <StackLayout Grid.Row="1" Margin="20,0">
+            <Entry Text="{Binding MeasurementLabel}" Placeholder="Measurement Label" 
+                   FontSize="Medium"  />
+            <Button Command="{Binding SaveMeasurementCommand}" Text="Save" FontSize="Medium" />
+        </StackLayout>
+
+        <ListView Grid.Row="2" ItemsSource="{Binding Measurements}" Margin="20,0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal">
+                           <Label Text="{Binding Display}" VerticalOptions="Center"
+                                  FontSize="Medium"  />
+                            
+                           <Label Text="{Binding HeightChange,StringFormat='{0:+0.##;-0.##}m'}"
+                                  TextColor="{Binding HeightChange, 
+                                  Converter={converters:HeightChangeConverter}}"
+                                  IsVisible="{Binding HeightChange, Converter=
+                                  {converters:HeightChangeConverter}}" 
+                                  VerticalOptions="Center"
+                                  FontSize="Medium" />                            
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Label Text="{Binding CurrentPressure, StringFormat='Current Pressure {0:N2} hPa'}" 
+               Margin="0,20" Grid.Row="5" HorizontalOptions="Center" />
+        
+    </Grid>
+
+</ContentPage>

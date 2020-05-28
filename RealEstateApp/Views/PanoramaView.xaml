@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Class="RealEstateApp.Views.PanoramaView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+    xmlns:converters="clr-namespace:RealEstateApp.Converters"
+    base:ViewModelLocator.AutoWireViewModel="true"
+    Title="Panorama">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding CloseCommand}" Text="Close" />
+    </ContentPage.ToolbarItems>
+    
+    <StackLayout Orientation="Vertical">
+        
+        <Label Text="{Binding Orientation, StringFormat='Orientation Q: {0}', Converter={converters:QuaternionConverter}}" HorizontalOptions="Center" 
+               BackgroundColor="White" LineBreakMode="WordWrap"  FontSize="Small"  />
+        
+        <AbsoluteLayout 
+            VerticalOptions="FillAndExpand" 
+            HorizontalOptions="FillAndExpand" 
+            IsClippedToBounds="True">
+
+            <Image Source="{Binding PanoramaUrl}" 
+                   WidthRequest="{Binding PanoramaWidth}" 
+                   HeightRequest="{Binding PanoramaHeight}" 
+                   TranslationX="{Binding TranslationX}" 
+                   TranslationY="{Binding TranslationY}" />
+
+        </AbsoluteLayout>
+    </StackLayout>
+
+
+</ContentPage>

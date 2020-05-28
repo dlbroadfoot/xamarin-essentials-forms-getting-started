@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  xmlns:views="clr-namespace:RealEstateApp.Views;assembly=RealEstateApp"
+                  xmlns:base="clr-namespace:RealEstateApp.ViewModels.Base;assembly=RealEstateApp"
+                  base:ViewModelLocator.AutoWireViewModel="true"
+                  x:Class="RealEstateApp.Views.MainView"
+                  MasterBehavior="Popover"
+                  IsPresentedChanged="MainView_OnIsPresentedChanged">
+
+    <MasterDetailPage.Master>
+        <views:MenuView />
+    </MasterDetailPage.Master>
+
+    <MasterDetailPage.Detail>
+        <NavigationPage>
+            <x:Arguments>
+                <ContentPage />
+            </x:Arguments>
+        </NavigationPage>
+    </MasterDetailPage.Detail>
+
+</MasterDetailPage>
