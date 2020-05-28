@@ -7,25 +7,53 @@ using Xamarin.Essentials;
 
 namespace RealEstateApp.ViewModels
 {
+    public interface ICompassSensor
+    {
+        void Start(SensorSpeed sensorSpeed, bool applyLowPassFilter);
+
+        void Stop();
+
+        bool IsMonitoring { get; }
+
+        event EventHandler<CompassChangedEventArgs> ReadingChanged;
+    }
+    public class CompassSensorImplementation : ICompassSensor
+    {
+        public void Start(SensorSpeed sensorSpeed, bool applyLowPassFilter) => Compass.Start(sensorSpeed, applyLowPassFilter);
+
+        public void Stop() => Compass.Stop();
+
+        public bool IsMonitoring => Compass.IsMonitoring;
+
+        public event EventHandler<CompassChangedEventArgs> ReadingChanged
+        {
+            add => Compass.ReadingChanged += value;
+            remove => Compass.ReadingChanged -= value;
+        }
+    }
+
     public class CompassViewModel : ViewModelBase
     {
-        public CompassViewModel()
+        private readonly ICompassSensor _compassSensor;
+
+        public CompassViewModel(ICompassSensor compassSensor)
         {
+            _compassSensor = compassSensor;
         }
 
         public override void OnAppearing()
         {
-            Compass.ReadingChanged += OnReadingChanged;
+            _compassSensor.ReadingChanged += OnReadingChanged;
 
-            if (Compass.IsMonitoring == false)
-                Compass.Start(SensorSpeed.UI, true);
+            if (_compassSensor.IsMonitoring == false)
+                _compassSensor.Start(SensorSpeed.UI, true);
         }
 
         public override void OnDisappearing()
         {
-            Compass.ReadingChanged -= OnReadingChanged;
-            if (Compass.IsMonitoring)
-                Compass.Stop();
+            _compassSensor.ReadingChanged -= OnReadingChanged;
+            if (_compassSensor.IsMonitoring)
+                _compassSensor.Stop();
         }
 
         private void OnReadingChanged(object sender, CompassChangedEventArgs e)

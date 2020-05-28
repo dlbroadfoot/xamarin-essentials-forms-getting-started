@@ -41,6 +41,7 @@ namespace RealEstateApp.ViewModels.Base
             _container.Register<ILogger, DebugLogger>();
             _container.Register<ILoginService, MockLoginService>();
             _container.Register<IUpdateService, UpdateService>();
+            _container.Register<ICompassSensor, CompassSensorImplementation>();
         }
 
         public static bool GetAutoWireViewModel(BindableObject bindable)
