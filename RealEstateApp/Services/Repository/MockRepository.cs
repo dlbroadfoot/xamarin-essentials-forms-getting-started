@@ -42,6 +42,9 @@ namespace RealEstateApp.Services.Repository
                 _properties[existingIndex] = property;
             }
 
+            var filePath = Path.Combine(FileSystem.AppDataDirectory, "properties.json");
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(_properties));
+
             _propertyUpdatedSubject.OnNext(property);
         }
 

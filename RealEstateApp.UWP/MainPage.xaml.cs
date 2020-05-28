@@ -8,7 +8,10 @@ namespace RealEstateApp.UWP
         {
             this.InitializeComponent();
 
-            LoadApplication(new RealEstateApp.App());
+            var windowsColor = Windows.UI.Color.FromArgb(255, 129, 66, 245);
+            var systemColor = windowsColor.ToSystemColor();
+
+            LoadApplication(new RealEstateApp.App(systemColor));
         }
     }
 }

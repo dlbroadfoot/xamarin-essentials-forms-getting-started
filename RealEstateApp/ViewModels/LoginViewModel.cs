@@ -43,6 +43,17 @@ namespace RealEstateApp.ViewModels
 
         public override async Task InitializeAsync(object navigationData)
         {
+            if (navigationData?.ToString() == "logout")
+            {
+                SecureStorage.RemoveAll();
+            }
+
+            var token = await SecureStorage.GetAsync("AccessToken");
+
+            if (await _loginService.IsValidAccessToken(token))
+            {
+                await NavigationService.NavigateToAsync<PropertyListViewModel>();
+            }
         }
 
         private string _username;

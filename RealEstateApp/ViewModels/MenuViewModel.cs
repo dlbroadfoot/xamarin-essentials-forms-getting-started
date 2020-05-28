@@ -96,6 +96,15 @@ namespace RealEstateApp.ViewModels
                 ViewModelType = typeof(AboutViewModel),
                 IsEnabled = true
             });
+
+            _menuItems.Add(new MenuItem
+            {
+                Title = "Log Out",
+                MenuItemType = MenuItemType.LogOut,
+                ViewModelType = typeof(LoginViewModel),
+                IsEnabled = true,
+                NavigationData = "logout"
+            });
         }
 
 

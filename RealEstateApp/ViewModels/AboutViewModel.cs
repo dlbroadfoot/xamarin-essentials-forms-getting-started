@@ -10,25 +10,56 @@ namespace RealEstateApp.ViewModels
     {
         public AboutViewModel()
         {
-            OpenWebCommand = new Command(() => Device.OpenUri(new Uri("https://xamarin.com/platform")));
         }
 
-        public ICommand OpenWebCommand { get; }
-        
-        // Additional code for Device Display Information clip
-        //public override void OnAppearing()
-        //{
-        //    DeviceDisplay.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
-        //}
+        public ICommand ResetPreferencesCommand => new Command(ResetPreferencesAsync);
+        public ICommand OpenSettingsCommand => new Command(OpenSettings);
 
-        //public override void OnDisappearing()
-        //{
-        //    DeviceDisplay.MainDisplayInfoChanged -= OnMainDisplayInfoChanged;
-        //}
+        public ICommand OpenAppStoreCommand => new Command(OpenAppStoreAsync);
 
-        //private void OnMainDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
-        //{
-        //    OnPropertyChanged(nameof(MainDisplayInfo));
-        //}
+        private async void OpenAppStoreAsync()
+        {
+            if (DeviceInfo.DeviceType == DeviceType.Virtual)
+            {
+                await DialogService.ShowAlertAsync("Rating the app is not supported in the simulator. Please use a physical device instead.", "Not Supported");
+                return;
+            }
+            if (DeviceInfo.Platform == DevicePlatform.Android)
+            {
+                Device.OpenUri(new Uri("https://play.google.com/store/apps/details?id=com.pluralsight"));
+            }
+            else if (Device.RuntimePlatform == Device.iOS)
+            {
+                Device.OpenUri(new Uri("https://apps.apple.com/au/app/pluralsight/id431748264"));
+            }
+        }
+
+        private void OpenSettings()
+        {
+            AppInfo.ShowSettingsUI();
+        }
+
+        private void ResetPreferencesAsync()
+        {
+            Preferences.Clear("TextToSpeech");
+            Preferences.Clear();
+        }
+
+        public DisplayInfo MainDisplayInfo => DeviceDisplay.MainDisplayInfo;
+
+        public override void OnAppearing()
+        {
+            DeviceDisplay.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
+        }
+
+        public override void OnDisappearing()
+        {
+            DeviceDisplay.MainDisplayInfoChanged -= OnMainDisplayInfoChanged;
+        }
+
+        private void OnMainDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(MainDisplayInfo));
+        }
     }
 }

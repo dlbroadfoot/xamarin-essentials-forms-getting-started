@@ -33,6 +33,103 @@
             Padding="16,40,16,40"
             Orientation="Vertical"
             Spacing="10">
+            <Label FontSize="22">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span
+                                FontAttributes="Bold"
+                                FontSize="22"
+                                Text="{x:Static essentials:AppInfo.Name}" />
+                            <Span ForegroundColor="{StaticResource LightTextColor}" Text="{x:Static essentials:AppInfo.VersionString}" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label>
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Package Name: " />
+                            <Span Text="{x:Static essentials:AppInfo.PackageName}" />
+                            <Span Text="{x:Static system:Environment.NewLine}" />
+                            <Span Text="Build String: " />
+                            <Span Text="{x:Static essentials:AppInfo.BuildString}" />
+                            <Span Text="{x:Static system:Environment.NewLine}" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+                </Label>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Model: " />
+                                <Span Text="{x:Static essentials:DeviceInfo.Model}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Manufacturer: " />
+                                <Span Text="{x:Static essentials:DeviceInfo.Manufacturer}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Name: " />
+                                <Span Text="{x:Static essentials:DeviceInfo.Name}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Idiom: " />
+                                <Span Text="{Binding StringFormat='{0}', Source={x:Static essentials:DeviceInfo.Idiom}}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Platform: " />
+                                <Span Text="{Binding StringFormat='{0}', Source={x:Static essentials:DeviceInfo.Platform}}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="VersionString: " />
+                                <Span Text="{x:Static essentials:DeviceInfo.VersionString}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="DeviceType: " />
+                                <Span Text="{Binding Path=., Source={x:Static essentials:DeviceInfo.DeviceType}}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Rotation: " />
+                                <Span Text="{Binding MainDisplayInfo.Rotation}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Orientation: " />
+                                <Span Text="{Binding MainDisplayInfo.Orientation}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Height: " />
+                                <Span Text="{Binding MainDisplayInfo.Height}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Width: " />
+                                <Span Text="{Binding MainDisplayInfo.Width}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                                <Span Text="Density: " />
+                                <Span Text="{Binding MainDisplayInfo.Density}" />
+                                <Span Text="{x:Static system:Environment.NewLine}" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Button
+                    Margin="0,10,0,0"
+                    BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding OpenAppStoreCommand}"
+                    Text="Open App Store"
+                    TextColor="White" />
+                <Button
+                    Margin="0,10,0,0"
+                    BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding OpenSettingsCommand}"
+                    Text="Open Settings"
+                    TextColor="White" />
+                <Button
+                    Margin="0,10,0,0"
+                    BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding ResetPreferencesCommand}"
+                    Text="Reset Preferences"
+                    TextColor="White" />
             </StackLayout>
         </ScrollView>
     </Grid>

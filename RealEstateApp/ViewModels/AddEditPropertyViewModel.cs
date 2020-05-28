@@ -64,12 +64,12 @@ namespace RealEstateApp.ViewModels
             {
                 StatusMessage = "Low battery. Please save changes asap";
                 if (Battery.State != BatteryState.Charging)
-                    StatusColor = System.Drawing.Color.Red;
+                    StatusColor = ColorConverters.FromHex("#f2100c");
                 else
-                    StatusColor = System.Drawing.Color.Yellow;
+                    StatusColor = ColorConverters.FromHsl(62,96,46);
 
                 if (Battery.EnergySaverStatus == EnergySaverStatus.On)
-                    StatusColor = System.Drawing.Color.Green;
+                    StatusColor = System.Drawing.Color.Green.MultiplyAlpha(.5f);
             }
             else
             {

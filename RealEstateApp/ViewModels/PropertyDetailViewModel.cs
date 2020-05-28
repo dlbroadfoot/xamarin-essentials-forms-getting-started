@@ -38,10 +38,22 @@ namespace RealEstateApp.ViewModels
 
         public override void OnAppearing()
         {
+            DeviceDisplay.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
+        }
+
+        private void OnMainDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        {
+            if (e.DisplayInfo.Orientation == DisplayOrientation.Landscape)
+            {
+                DeviceDisplay.KeepScreenOn = true;
+                ViewPhotosCommand.Execute(null);
+            }
         }
 
         public override void OnDisappearing()
         {
+            DeviceDisplay.KeepScreenOn = false;
+            DeviceDisplay.MainDisplayInfoChanged -= OnMainDisplayInfoChanged;
         }
 
         private async void CopyToClipboardAsync()
@@ -145,9 +157,15 @@ namespace RealEstateApp.ViewModels
 
         private async void SendEmailAsync(Vendor vendor)
         {
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var attachmentFilePath = Path.Combine(folder, "property.txt");
-            File.WriteAllText(attachmentFilePath, $"{Property.Address}");
+            var folder = FileSystem.CacheDirectory;
+            var attachmentFilePath = Path.Combine(folder, "draft-contract.pdf");
+            using (var packageStream = await FileSystem.OpenAppPackageFileAsync("contract.pdf"))
+            {
+                using (var fileStream = File.OpenWrite(attachmentFilePath))
+                {
+                    await packageStream.CopyToAsync(fileStream);
+                }
+            }
 
             ExperimentalFeatures.Enable(ExperimentalFeatures.EmailAttachments);
 
@@ -222,28 +240,48 @@ namespace RealEstateApp.ViewModels
         public ObservableCollection<Locale> LocalesCollection { get; set; } =
             new ObservableCollection<Locale>();
         
-        private float _selectedVolume = 1;
+        private float _selectedVolume = Preferences.Get("SelectedVolume",1f,"TextToSpeech");
 
         public float SelectedVolume
         {
             get => _selectedVolume;
-            set => SetProperty(ref _selectedVolume, value);
+            set
+            {
+                SetProperty(ref _selectedVolume, value);
+                Preferences.Set("SelectedVolume", value, "TextToSpeech");
+            }
         }
 
-        private float _selectedPitch = 1;
+        private float _selectedPitch = Preferences.Get("SelectedPitch", 1f, "TextToSpeech");
 
         public float SelectedPitch
         {
             get => _selectedPitch;
-            set => SetProperty(ref _selectedPitch, value);
+            set
+            {
+                SetProperty(ref _selectedPitch, value);
+                Preferences.Set("SelectedPitch", value, "TextToSpeech");
+            }
         }
 
         private Locale _selectedLocale;
 
         public Locale SelectedLocale
         {
-            get => _selectedLocale;
-            set => SetProperty(ref _selectedLocale, value);
+            get
+            {
+                if (_selectedLocale == null)
+                {
+                    var name = Preferences.Get("SelectedLocaleName", null);
+                    _selectedLocale = LocalesCollection.FirstOrDefault(x => x.Name == name);
+                }
+                return _selectedLocale;
+            }
+            set
+            {
+                SetProperty(ref _selectedLocale, value);
+                Preferences.Set("SelectedLocaleName", value.Name);
+            }
         }
 
         private bool _isSpeaking;

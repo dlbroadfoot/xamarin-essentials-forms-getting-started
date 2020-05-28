@@ -11,7 +11,10 @@ namespace RealEstateApp.iOS
         {
             global::Xamarin.Forms.Forms.Init();
 
-            LoadApplication(new App());
+            var iOSColor = UIKit.UIColor.Red;
+            var systemColor = iOSColor.ToSystemColor();
+
+            LoadApplication(new App(systemColor));
 
             return base.FinishedLaunching(app, options);
         }
