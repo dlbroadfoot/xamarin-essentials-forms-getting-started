@@ -106,24 +106,21 @@
                 Grid.Row="4"
                 FontSize="14"
                 Text="{Binding Property.LandSize, StringFormat='Land size: {0} &#x33a1;'}" />
-            <StackLayout Grid.Row="5" Orientation="Horizontal">
-                <Label
-                    Margin="0,20,0,0"
-                    FontAttributes="Bold"
-                    FontSize="14"
-                    VerticalOptions="Start"
-                    Text="Description:" />
-                <Button Text="&#xf04b;" Style="{StaticResource IconFont}"
-                        Command="{Binding SpeakDescriptionCommand}"
-                        IsVisible="{Binding IsSpeaking, Converter={converters:InverseBoolConverter}}">
+            <StackLayout Orientation="Horizontal" Grid.Row="5">
+                <Button Command="{Binding SpeakDescriptionCommand}" 
+                        Text="&#xf04b;" Style="{StaticResource IconFont}"
+                        IsVisible="{Binding IsSpeaking, Converter={converters:InverseBoolConverter}}"
+                        FontSize="Large" WidthRequest="52" HeightRequest="52">
                     <Button.Behaviors>
                         <behaviors:LongPressBehavior Command="{Binding ToggleAdvancedSpeechCommand}" />
                     </Button.Behaviors>
                 </Button>
-                <Button Text="&#xf04d;" Style="{StaticResource IconFont}"
-                        Command="{Binding CancelSpeechCommand}"
-                        IsVisible="{Binding IsSpeaking}"/>
-            </StackLayout>
+                <Button Command="{Binding CancelSpeechCommand}"
+                        Text="&#xf04d;"                                 
+                        IsVisible="{Binding IsSpeaking}"
+                        Style="{StaticResource IconFont}" 
+                        FontSize="Large" WidthRequest="52" HeightRequest="52" x:Name="btnCancel"/>
+            </StackLayout>            
             <Grid Grid.Row="6" IsVisible="{Binding ShowAdvancedSpeechControls}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -142,7 +139,12 @@
                 <Picker Grid.Row="2" Grid.Column="1" FontSize="Small" 
                         ItemsSource="{Binding LocalesCollection}" SelectedItem="{Binding SelectedLocale}" ItemDisplayBinding="{Binding Name}" />
             </Grid>
-            <StackLayout Grid.Row="7" Orientation="Horizontal" IsVisible="False">              
+            <StackLayout Grid.Row="7" Orientation="Horizontal">
+                <Label
+                FontAttributes="Bold"
+                FontSize="14"
+                VerticalOptions="Start"
+                Text="Description:" />                
             </StackLayout>            
             <Label
                 Grid.Row="8"
